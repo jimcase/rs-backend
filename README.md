@@ -1,6 +1,7 @@
 [![Unit tests](https://github.com/jimcase/rs-backend/actions/workflows/rust.yml/badge.svg?branch=master)](https://github.com/jimcase/rs-backend/actions/workflows/rust.yml)
 [![codecov](https://codecov.io/gh/jimase/rs-backend/branch/main/graph/badge.svg)](https://codecov.io/gh/jimase/rs-backend)
 
+# RS Backend
 ## Install Rust
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
