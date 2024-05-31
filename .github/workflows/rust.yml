@@ -52,6 +52,9 @@ jobs:
       - name: Install SQLite dependencies
         run: sudo apt-get update && sudo apt-get install -y sqlite3 libsqlite3-dev
 
+      - name: Format code
+        run: cargo fmt --all -- --check
+
       - name: Build the project
         run: cargo build --verbose
 
@@ -61,5 +64,5 @@ jobs:
       - name: Run clippy
         run: cargo clippy -- -D warnings
 
-      - name: Run fmt
+      - name: Run fmt check
         run: cargo fmt -- --check
