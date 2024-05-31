@@ -56,6 +56,11 @@ jobs:
         run: cargo build --verbose
 
       - name: Run tests
+        env:
+          DATABASE_URL: "sqlite::memory:" 
+        run: cargo test --verbose
+
+      - name: Run tests
         run: cargo test --verbose
 
       - name: Run clippy
