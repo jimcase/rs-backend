@@ -1,22 +1,29 @@
-use actix_web::{web, HttpResponse, Responder, HttpRequest};
+use super::models::{NewUser, UpdateUser, User, Users};
+use actix_web::{web, HttpRequest, HttpResponse, Responder};
 use sea_query::{Expr, Query, SqliteQueryBuilder, Value};
 use serde_json::json;
-use sqlx::{SqlitePool, sqlite::SqliteArguments};
-use super::models::{User, NewUser, UpdateUser, Users};
+use sqlx::{sqlite::SqliteArguments, SqlitePool};
 
 pub async fn index() -> impl Responder {
     HttpResponse::Ok().body("Bienvenido al servidor API!")
 }
 
-pub async fn create_user(new_user: web::Json<NewUser>, db_pool: web::Data<SqlitePool>) -> impl Responder {
+pub async fn create_user(
+    new_user: web::Json<NewUser>,
+    db_pool: web::Data<SqlitePool>,
+) -> impl Responder {
     let (sql, values) = Query::insert()
         .into_table(Users::Table)
         .columns(vec![Users::Nombre, Users::Email])
-        .values_panic(vec![new_user.nombre.clone().into(), new_user.email.clone().into()])
+        .values_panic(vec![
+            new_user.nombre.clone().into(),
+            new_user.email.clone().into(),
+        ])
         .build(SqliteQueryBuilder);
 
     let mut query = sqlx::query(&sql);
-    for value in values.0 {  // Acceder al Vec<Value> interno
+    for value in values.0 {
+        // Acceder al Vec<Value> interno
         query = bind_query_value(query, value);
     }
 
@@ -40,7 +47,8 @@ pub async fn get_user(req: HttpRequest, db_pool: web::Data<SqlitePool>) -> impl 
                 .build(SqliteQueryBuilder);
 
             let mut query = sqlx::query_as::<_, User>(&sql);
-            for value in values.0 {  // Acceder al Vec<Value> interno
+            for value in values.0 {
+                // Acceder al Vec<Value> interno
                 query = bind_query_as_value(query, value);
             }
 
@@ -49,22 +57,32 @@ pub async fn get_user(req: HttpRequest, db_pool: web::Data<SqlitePool>) -> impl 
             match result {
                 Ok(Some(user)) => HttpResponse::Ok().json(user),
                 Ok(None) => HttpResponse::NotFound().json("Usuario no encontrado"),
-                Err(_) => HttpResponse::InternalServerError().json("Error al consultar la base de datos"),
+                Err(_) => {
+                    HttpResponse::InternalServerError().json("Error al consultar la base de datos")
+                }
             }
-        },
-        Err(_) => HttpResponse::BadRequest().json("ID inválido")
+        }
+        Err(_) => HttpResponse::BadRequest().json("ID inválido"),
     }
 }
 
-pub async fn update_user(id: web::Path<i64>, updated_user: web::Json<UpdateUser>, db_pool: web::Data<SqlitePool>) -> impl Responder {
+pub async fn update_user(
+    id: web::Path<i64>,
+    updated_user: web::Json<UpdateUser>,
+    db_pool: web::Data<SqlitePool>,
+) -> impl Responder {
     let (sql, values) = Query::update()
         .table(Users::Table)
-        .values(vec![(Users::Nombre, updated_user.nombre.clone().into()), (Users::Email, updated_user.email.clone().into())])
+        .values(vec![
+            (Users::Nombre, updated_user.nombre.clone().into()),
+            (Users::Email, updated_user.email.clone().into()),
+        ])
         .and_where(Expr::col(Users::Id).eq(*id))
         .build(SqliteQueryBuilder);
 
     let mut query = sqlx::query(&sql);
-    for value in values.0 {  // Acceder al Vec<Value> interno
+    for value in values.0 {
+        // Acceder al Vec<Value> interno
         query = bind_query_value(query, value);
     }
 
@@ -83,7 +101,8 @@ pub async fn delete_user(id: web::Path<i64>, db_pool: web::Data<SqlitePool>) -> 
         .build(SqliteQueryBuilder);
 
     let mut query = sqlx::query(&sql);
-    for value in values.0 {  // Acceder al Vec<Value> interno
+    for value in values.0 {
+        // Acceder al Vec<Value> interno
         query = bind_query_value(query, value);
     }
 
@@ -95,7 +114,10 @@ pub async fn delete_user(id: web::Path<i64>, db_pool: web::Data<SqlitePool>) -> 
     }
 }
 
-fn bind_query_value<'q>(query: sqlx::query::Query<'q, sqlx::Sqlite, SqliteArguments<'q>>, value: Value) -> sqlx::query::Query<'q, sqlx::Sqlite, SqliteArguments<'q>> {
+fn bind_query_value<'q>(
+    query: sqlx::query::Query<'q, sqlx::Sqlite, SqliteArguments<'q>>,
+    value: Value,
+) -> sqlx::query::Query<'q, sqlx::Sqlite, SqliteArguments<'q>> {
     match value {
         Value::Bool(boolean) => query.bind(boolean),
         Value::TinyInt(int) => query.bind(int),
@@ -112,7 +134,10 @@ fn bind_query_value<'q>(query: sqlx::query::Query<'q, sqlx::Sqlite, SqliteArgume
     }
 }
 
-fn bind_query_as_value<'q>(query: sqlx::query::QueryAs<'q, sqlx::Sqlite, User, SqliteArguments<'q>>, value: Value) -> sqlx::query::QueryAs<'q, sqlx::Sqlite, User, SqliteArguments<'q>> {
+fn bind_query_as_value<'q>(
+    query: sqlx::query::QueryAs<'q, sqlx::Sqlite, User, SqliteArguments<'q>>,
+    value: Value,
+) -> sqlx::query::QueryAs<'q, sqlx::Sqlite, User, SqliteArguments<'q>> {
     match value {
         Value::Bool(boolean) => query.bind(boolean),
         Value::TinyInt(int) => query.bind(int),

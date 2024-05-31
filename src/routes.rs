@@ -1,5 +1,5 @@
+use super::handlers::{create_user, delete_user, get_user, index, update_user};
 use actix_web::web;
-use super::handlers::{create_user, get_user, update_user, delete_user, index};
 
 pub fn config_routes(cfg: &mut web::ServiceConfig) {
     cfg.service(
