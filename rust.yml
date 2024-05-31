@@ -52,6 +52,9 @@ jobs:
       - name: Install SQLite dependencies
         run: sudo apt-get install -y sqlite3 libsqlite3-dev
 
+      - name: Format code
+        run: cargo fmt --all
+        
       - name: Build the project
         run: cargo build --verbose
 
