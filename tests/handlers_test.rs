@@ -18,7 +18,7 @@ async fn setup_db() -> SqlitePool {
             nombre TEXT NOT NULL,
             email TEXT NOT NULL
         );
-        "#
+        "#,
     )
     .execute(&pool)
     .await
@@ -33,7 +33,7 @@ async fn test_create_user() {
     let app = test::init_service(
         App::new()
             .app_data(web::Data::new(pool.clone()))
-            .route("/usuarios", web::post().to(create_user)),
+            .route("/users", web::post().to(create_user)),
     )
     .await;
 
@@ -43,7 +43,7 @@ async fn test_create_user() {
     };
 
     let req = test::TestRequest::post()
-        .uri("/usuarios")
+        .uri("/users")
         .set_json(&new_user)
         .to_request();
 
@@ -57,7 +57,7 @@ async fn test_get_user() {
     let app = test::init_service(
         App::new()
             .app_data(web::Data::new(pool.clone()))
-            .route("/usuarios/{id}", web::get().to(get_user)),
+            .route("/users/{id}", web::get().to(get_user)),
     )
     .await;
 
@@ -75,9 +75,7 @@ async fn test_get_user() {
     .await
     .unwrap();
 
-    let req = test::TestRequest::get()
-        .uri("/usuarios/1")
-        .to_request();
+    let req = test::TestRequest::get().uri("/users/1").to_request();
 
     let resp = test::call_service(&app, req).await;
     assert_eq!(resp.status(), StatusCode::OK);
@@ -89,7 +87,7 @@ async fn test_update_user() {
     let app = test::init_service(
         App::new()
             .app_data(web::Data::new(pool.clone()))
-            .route("/usuarios/{id}", web::put().to(update_user)),
+            .route("/users/{id}", web::put().to(update_user)),
     )
     .await;
 
@@ -113,7 +111,7 @@ async fn test_update_user() {
     };
 
     let req = test::TestRequest::put()
-        .uri("/usuarios/1")
+        .uri("/users/1")
         .set_json(&updated_user)
         .to_request();
 
@@ -127,7 +125,7 @@ async fn test_delete_user() {
     let app = test::init_service(
         App::new()
             .app_data(web::Data::new(pool.clone()))
-            .route("/usuarios/{id}", web::delete().to(delete_user)),
+            .route("/users/{id}", web::delete().to(delete_user)),
     )
     .await;
 
@@ -145,9 +143,7 @@ async fn test_delete_user() {
     .await
     .unwrap();
 
-    let req = test::TestRequest::delete()
-        .uri("/usuarios/1")
-        .to_request();
+    let req = test::TestRequest::delete().uri("/users/1").to_request();
 
     let resp = test::call_service(&app, req).await;
     assert_eq!(resp.status(), StatusCode::OK);
