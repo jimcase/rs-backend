@@ -1,4 +1,4 @@
-[![Rust](https://github.com/jimcase/rs-backend/actions/workflows/rust.yml/badge.svg?branch=master)](https://github.com/jimcase/rs-backend/actions/workflows/rust.yml)
+[![Unit tests](https://github.com/jimcase/rs-backend/actions/workflows/rust.yml/badge.svg?branch=master)](https://github.com/jimcase/rs-backend/actions/workflows/rust.yml)
 [![codecov](https://codecov.io/gh/jimase/rs-backend/branch/main/graph/badge.svg)](https://codecov.io/gh/jimase/rs-backend)
 
 ## Install Rust
